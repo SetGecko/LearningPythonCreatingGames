@@ -60,7 +60,7 @@ def displayBoard(missedLetters, correctLetters, secretWord):
 
     for i in range(len(secretWord)): # заменяет пропуски отгаданными буквами
         if secretWord[i] in correctLetters:
-            blanks = blanks[:i] + secretWord + blanks[i+1:]
+            blanks = blanks[:i] + secretWord[i] + blanks[i+1:]
 
     for letter in blanks: # Показывает секретное слово с пробелами между буквами
         print(letter, end=' ')
@@ -81,3 +81,47 @@ def getGuess(alreadyGuessed):
         else:
             return guess
 
+def playAgain():
+    # эта функция возвращает True если игрок хочет сыграть заново, в противном случае возвращает False.
+    print('Хотите сыграть ещё? (да или нет)')
+    return input().lower().startswith('д')
+
+print('В И С Е Л И Ц А')
+missedLetters = ''
+correctLetters = ''
+secretWord = getRandomWord(words)
+gameIsDone = False
+
+while True:
+    displayBoard(missedLetters, correctLetters, secretWord)
+
+    # Позволяет игроку ввести букву.
+    guess = getGuess(missedLetters + correctLetters)
+
+    if guess in secretWord:
+        correctLetters = correctLetters + guess
+        # Проверяет, выйграл ли игрок.
+        foundAllLetters = True
+        for i in range(len(secretWord)):
+            if secretWord[i] not in correctLetters:
+                foundAllLetters = False
+                break
+        if foundAllLetters:
+            print('ДА! Секретное слово - "' + secretWord + '"! Вы угадали!')
+            gameIsDone = True
+    else:
+        missedLetters = missedLetters + guess
+
+        # Проверяет, превысил ли игрок лимит попыток и проиграл
+        if len(missedLetters) == len(hangmanPics) - 1:
+            displayBoard(missedLetters, correctLetters, secretWord)
+            print('Вы исчерпали все попытки!\nНеугадано букв: ' + str(len(missedLetters)) + ' и угадано букв: ' + str(len(correctLetters)) + ' Было загадано слово "' + secretWord + '".')
+            gameIsDone = True
+    if gameIsDone:
+        if playAgain():
+            missedLetters = ''
+            correctLetters = ''
+            gameIsDone = False
+            secretWord = getRandomWord(words)
+        else:
+            break
