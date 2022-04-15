@@ -54,10 +54,11 @@ words = {'Цвета':'красный оранжевый желтый зелен
 def getRandomWord(wordDict):
     # Эта функция возвращает случайную строку из переданного словаря списков строк, а так же ключ
     # Во первых, случайным образом выбираем ключ из словаря:
-    wordKey = random.choice(list(wordDict.keys))
+    wordKey = random.choice(list(wordDict.keys()))
 
     # Во вторых, случайным образом выбираем слово из списка ключей в словаре:
-    wordIndex = random.randint(0, len(wordDict[wordKey] - 1))
+    wordIndex = random.randint(0, len(wordDict[wordKey]) - 1)
+    return [wordDict[wordKey][wordIndex], wordKey]
 
 def displayBoard(missedLetters, correctLetters, secretWord):
     print(hangmanPics[len(missedLetters)])
@@ -99,12 +100,31 @@ def playAgain():
     return input().lower().startswith('д')
 
 print('В И С Е Л И Ц А')
+
+difficulty = ''
+
+while difficulty not in ['Л', 'С', 'Т']:
+    print('Выберите уровень сложности: Л - Лёгкий, С - Средний, Т - Тяжёлый')
+    difficulty = input().upper()
+
+if difficulty == 'C':
+    del hangmanPics[8]
+    del hangmanPics[7]
+
+if difficulty == 'Т':
+    del hangmanPics[8]
+    del hangmanPics[7]
+    del hangmanPics[5]
+    del hangmanPics[3]
+
 missedLetters = ''
 correctLetters = ''
-secretWord = getRandomWord(words)
+secretWord, secretSet = getRandomWord(words)
 gameIsDone = False
 
+
 while True:
+    print('Секретное слово из набора: ' + secretSet)
     displayBoard(missedLetters, correctLetters, secretWord)
 
     # Позволяет игроку ввести букву.
@@ -134,6 +154,6 @@ while True:
             missedLetters = ''
             correctLetters = ''
             gameIsDone = False
-            secretWord = getRandomWord(words)
+            secretWord, secretSet = getRandomWord(words)
         else:
             break
